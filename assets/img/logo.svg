@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Coruscantbytes logo">
+  <defs>
+    <linearGradient id="cb-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="55%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#e845c4"/>
+    </linearGradient>
+    <filter id="cb-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3.5" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g fill="none" stroke="url(#cb-grad)" filter="url(#cb-glow)">
+    <!-- Main C arc -->
+    <path d="M150 55 A62 62 0 1 0 150 145" stroke-width="14" stroke-linecap="round"/>
+
+    <!-- Circuit traces branching off the arc -->
+    <path d="M62 66 H36 M36 66 V44" stroke-width="4" stroke-linecap="round"/>
+    <path d="M52 100 H24" stroke-width="4" stroke-linecap="round"/>
+    <path d="M62 134 H40 M40 134 V156" stroke-width="4" stroke-linecap="round"/>
+    <path d="M108 46 V22" stroke-width="4" stroke-linecap="round"/>
+    <path d="M108 154 V178" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <g fill="url(#cb-grad)" filter="url(#cb-glow)">
+    <circle cx="36" cy="42" r="5"/>
+    <circle cx="22" cy="100" r="5"/>
+    <circle cx="40" cy="158" r="5"/>
+    <circle cx="108" cy="20" r="5"/>
+    <circle cx="108" cy="180" r="5"/>
+  </g>
+</svg>
