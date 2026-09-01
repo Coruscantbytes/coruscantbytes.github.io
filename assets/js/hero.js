@@ -46,8 +46,23 @@
   let W = 0, H = 0, dpr = 1;
   let cx = 0, cy = 0, R = 0, rInner = 0, gapHalf = 0;
   let traces = [], grad = null;
-  let rafId = 0, running = false, startT = 0;
-  const pointer = { x: -9999, y: -9999, active: false };
+  // `elapsed` accumulates across stop/start (scrolling away and back), so the
+  // flowing current and the chip's rotation pick up where they left off
+  let rafId = 0, running = false, lastT = 0, elapsed = 0;
+
+  // Pointer state. Client coords are the source of truth (they survive
+  // scrolling); canvas-local x/y are re-derived every frame and eased, so the
+  // rig glides instead of snapping. `presence` fades 0..1 as the cursor
+  // enters/leaves the hero, so nothing ever pops in or out.
+  const pointer = {
+    clientX: -9999, clientY: -9999,
+    x: -9999, y: -9999,       // eased, canvas-local
+    tx: -9999, ty: -9999,     // target, canvas-local
+    over: false,              // raw: is the cursor over the canvas right now
+    presence: 0,              // eased 0..1
+    seen: false,              // has the cursor ever been over the canvas
+    get active() { return this.presence > 0.01; }
+  };
 
   const lerp = (a, b, t) => a + (b - a) * t;
   const mix = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
@@ -245,7 +260,8 @@
       if (d < min) min = d;
     }
     min = Math.sqrt(min);
-    return min < CONFIG.mouseRadius ? 1 - min / CONFIG.mouseRadius : 0;
+    if (min >= CONFIG.mouseRadius) return 0;
+    return (1 - min / CONFIG.mouseRadius) * pointer.presence;
   }
 
   /* ---------- pointer "rig": its own little PCB that solders onto the C ---------- */
@@ -306,6 +322,11 @@
     const baseAng = reduceMotion ? 0 : t * 0.00045;
     const targets = attachTargets(px, py);
     const wired = targets.length > 0;
+
+    // everything below fades with `presence`, so the rig eases in and out
+    // instead of popping when the cursor enters or leaves the hero
+    ctx.save();
+    ctx.globalAlpha = pointer.presence;
 
     // faint radial light (kept subtle now that there's structure)
     const g = ctx.createRadialGradient(px, py, 0, px, py, CONFIG.mouseRadius * 1.1);
@@ -424,7 +445,8 @@
     ctx.fillRect(-1.8, -1.8, 3.6, 3.6);
     ctx.globalCompositeOperation = "source-over";
 
-    ctx.restore();
+    ctx.restore();       // chip transform
+    ctx.restore();       // presence alpha
     ctx.lineJoin = "round";
   }
 
@@ -521,14 +543,18 @@
   }
 
   function frame(now) {
-    if (!startT) startT = now;
-    draw(now - startT);
+    if (!lastT) lastT = now;
+    const dt = Math.min(64, now - lastT);   // clamp: tab wake-ups shouldn't jump
+    lastT = now;
+    elapsed += dt;
+    easePointer(dt);
+    draw(elapsed);
     rafId = requestAnimationFrame(frame);
   }
   function start() {
     if (running || reduceMotion) return;
     running = true;
-    startT = 0;
+    lastT = 0;   // re-anchor to the next frame; `elapsed` carries on
     rafId = requestAnimationFrame(frame);
   }
   function stop() {
@@ -538,23 +564,58 @@
   }
 
   /* ---------- pointer (canvas sits behind the hero text) ---------- */
+
+  // Record raw client coords only; the canvas-local position is derived each
+  // frame so scrolling never teleports the rig.
   function track(e) {
-    const rect = canvas.getBoundingClientRect();
-    const inside =
-      e.clientX >= rect.left && e.clientX <= rect.right &&
-      e.clientY >= rect.top && e.clientY <= rect.bottom;
-    pointer.active = inside;
-    if (inside) {
-      pointer.x = e.clientX - rect.left;
-      pointer.y = e.clientY - rect.top;
+    pointer.clientX = e.clientX;
+    pointer.clientY = e.clientY;
+    syncPointer();
+    if (reduceMotion) {
+      // no rAF loop to ease things, so jump straight to the target
+      pointer.x = pointer.tx;
+      pointer.y = pointer.ty;
+      pointer.presence = pointer.over ? 1 : 0;
+      draw(performance.now());
     }
-    if (reduceMotion) draw(performance.now());
   }
+
+  // Re-derive canvas-local target + over-state from the live canvas rect.
+  // A margin lets the rig start easing in just before the cursor arrives and
+  // keeps it from cutting out the instant it crosses the edge.
+  function syncPointer() {
+    const rect = canvas.getBoundingClientRect();
+    const m = 40;
+    pointer.over =
+      pointer.clientX >= rect.left - m && pointer.clientX <= rect.right + m &&
+      pointer.clientY >= rect.top - m && pointer.clientY <= rect.bottom + m;
+    pointer.tx = pointer.clientX - rect.left;
+    pointer.ty = pointer.clientY - rect.top;
+    if (pointer.over && !pointer.seen) {
+      // first sighting: start the rig where the cursor already is
+      pointer.seen = true;
+      pointer.x = pointer.tx;
+      pointer.y = pointer.ty;
+    }
+  }
+
+  // Ease position + presence toward their targets. dt-normalised so the feel
+  // is the same on 60Hz and 144Hz screens.
+  function easePointer(dt) {
+    syncPointer();
+    const kPos = 1 - Math.pow(0.0016, dt / 1000);   // ~snappy but not instant
+    const kFade = 1 - Math.pow(0.0000015, dt / 1000); // faster fade in/out
+    pointer.x = lerp(pointer.x, pointer.tx, kPos);
+    pointer.y = lerp(pointer.y, pointer.ty, kPos);
+    pointer.presence = lerp(pointer.presence, pointer.over ? 1 : 0, kFade);
+    if (pointer.presence < 0.004) pointer.presence = 0;
+  }
+
   window.addEventListener("pointermove", track, { passive: true });
   window.addEventListener("pointerdown", track, { passive: true });
   window.addEventListener("blur", () => {
-    pointer.active = false;
-    if (reduceMotion) draw(performance.now());
+    pointer.over = false;
+    if (reduceMotion) { pointer.presence = 0; draw(performance.now()); }
   });
 
   /* ---------- lifecycle ---------- */

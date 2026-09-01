@@ -78,34 +78,62 @@
   const parallax = document.getElementById("hero-parallax");
 
   if (hero && !reduceMotion) {
+    // Targets the pointer sets, and the eased values actually rendered.
+    // Everything is interpolated so leaving the hero (e.g. heading down to
+    // the games panel) glides back to rest instead of snapping in one frame.
+    let tx = 0.5, ty = 0.5, tStrength = 0;
+    let vx = 0.5, vy = 0.5, vStrength = 0;
     let raf = 0;
-    let px = 0.5;
-    let py = 0.5;
+    let last = 0;
 
     hero.addEventListener("pointermove", (e) => {
       const r = hero.getBoundingClientRect();
-      px = (e.clientX - r.left) / r.width;
-      py = (e.clientY - r.top) / r.height;
-      if (!raf) raf = requestAnimationFrame(apply);
-    });
+      tx = (e.clientX - r.left) / r.width;
+      ty = (e.clientY - r.top) / r.height;
+      tStrength = 1;
+      kick();
+    }, { passive: true });
 
     hero.addEventListener("pointerleave", () => {
-      px = 0.5;
-      py = 0.5;
-      if (!raf) raf = requestAnimationFrame(apply);
-    });
+      tx = 0.5;
+      ty = 0.5;
+      tStrength = 0;
+      kick();
+    }, { passive: true });
 
-    function apply() {
-      raf = 0;
+    function kick() {
+      if (!raf) {
+        last = performance.now();
+        raf = requestAnimationFrame(tick);
+      }
+    }
+
+    function tick(now) {
+      const dt = Math.min(64, now - last);
+      last = now;
+      const k = 1 - Math.pow(0.002, dt / 1000);
+
+      vx += (tx - vx) * k;
+      vy += (ty - vy) * k;
+      vStrength += (tStrength - vStrength) * k;
+
       if (glow) {
-        glow.style.setProperty("--mx", (px * 100).toFixed(2) + "%");
-        glow.style.setProperty("--my", (py * 100).toFixed(2) + "%");
+        glow.style.setProperty("--mx", (vx * 100).toFixed(2) + "%");
+        glow.style.setProperty("--my", (vy * 100).toFixed(2) + "%");
+        glow.style.opacity = vStrength.toFixed(3);
       }
       if (parallax) {
-        const dx = (px - 0.5) * 22;
-        const dy = (py - 0.5) * 22;
+        const dx = (vx - 0.5) * 22 * vStrength;
+        const dy = (vy - 0.5) * 22 * vStrength;
         parallax.style.transform = `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0)`;
       }
+
+      // keep going until everything has settled, then release the loop
+      const settled =
+        Math.abs(tx - vx) < 0.0005 &&
+        Math.abs(ty - vy) < 0.0005 &&
+        Math.abs(tStrength - vStrength) < 0.002;
+      raf = settled ? 0 : requestAnimationFrame(tick);
     }
   }
 })();

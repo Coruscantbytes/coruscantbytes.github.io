@@ -183,8 +183,15 @@ h1, h2, h3 {
   cursor: crosshair;
 }
 
-/* the circuit "C" fills the hero; the wordmark sits below it */
-.hero__content { align-self: end; margin-bottom: clamp(3.5rem, 12vh, 7rem); cursor: auto; }
+/* the circuit "C" fills the hero; the wordmark sits below it.
+   The crosshair stays consistent across the whole hero — only real
+   interactive targets override it, so the cursor never flips at an
+   invisible boundary. */
+.hero__content { align-self: end; margin-bottom: clamp(3.5rem, 12vh, 7rem); }
+.hero a,
+.hero button { cursor: pointer; }
+.hero__title,
+.hero__tagline { cursor: default; }
 
 /* mouse-reactive circuit field */
 .hero__canvas {
@@ -195,18 +202,20 @@ h1, h2, h3 {
   z-index: -2;
 }
 
-/* soft light that trails the pointer */
+/* soft light that trails the pointer — position and opacity are eased in
+   site.js, so no CSS transition here (that would double up and feel laggy) */
 .hero__pointer-glow {
   position: absolute;
   inset: 0;
   z-index: -1;
+  opacity: 0;
+  will-change: opacity;
   background: radial-gradient(
     340px circle at var(--mx, 50%) var(--my, 50%),
     rgba(34, 211, 238, 0.06),
     rgba(232, 69, 196, 0.03) 40%,
     transparent 70%
   );
-  transition: background 0.1s linear;
 }
 
 .hero__content {

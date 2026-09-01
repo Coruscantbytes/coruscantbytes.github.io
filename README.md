@@ -73,9 +73,21 @@ tags in `index.html` already point at it.
 
 ## Social links
 
-The footer of `index.html` has a `<nav class="social">` block with `href="#"`
-placeholders for itch.io, Steam, YouTube, X, Discord and GitHub. Replace the
-`#` with your real URLs (or delete the ones you don't use).
+The footer of `index.html` has a `<nav class="social">` block, wired to the
+studio's real accounts: [X](https://x.com/coruscantbytes),
+[Instagram](https://www.instagram.com/coruscantbytes/),
+[TikTok](https://www.tiktok.com/@coruscantbytes),
+[YouTube](https://www.youtube.com/@Coruscantbytes) and
+[GitHub](https://github.com/Coruscantbytes).
+
+To add another (itch.io, Steam, Discord…), copy one of the `<a>` blocks and
+swap the `href`, `aria-label`, `title` and the inline `<svg>` path.
+
+## Cache busting
+
+CSS and JS are linked with a `?v=N` query string in `index.html`. **Bump that
+number whenever you edit `main.css`, `site.js` or `hero.js`** — otherwise
+returning visitors keep running the old cached copy.
 
 ## Theming
 
