@@ -180,10 +180,11 @@ h1, h2, h3 {
   overflow: hidden;
   isolation: isolate;
   background: radial-gradient(circle at 50% 42%, rgba(139, 92, 246, 0.09), transparent 62%);
+  cursor: crosshair;
 }
 
-/* the neural "C" fills the hero; the wordmark sits below it */
-.hero__content { align-self: end; margin-bottom: clamp(3.5rem, 12vh, 7rem); }
+/* the circuit "C" fills the hero; the wordmark sits below it */
+.hero__content { align-self: end; margin-bottom: clamp(3.5rem, 12vh, 7rem); cursor: auto; }
 
 /* mouse-reactive circuit field */
 .hero__canvas {
@@ -201,18 +202,35 @@ h1, h2, h3 {
   z-index: -1;
   background: radial-gradient(
     340px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(34, 211, 238, 0.14),
-    rgba(232, 69, 196, 0.06) 40%,
+    rgba(34, 211, 238, 0.06),
+    rgba(232, 69, 196, 0.03) 40%,
     transparent 70%
   );
   transition: background 0.1s linear;
 }
 
 .hero__content {
+  position: relative;
   text-align: center;
-  padding: 2rem 1.5rem;
+  padding: 2.4rem clamp(1.5rem, 7vw, 4.5rem);
   transform: translate3d(0, 0, 0);
   will-change: transform;
+  isolation: isolate;
+}
+
+/* soft dark scrim so the wordmark + tagline stay readable over the traces */
+.hero__content::before {
+  content: "";
+  position: absolute;
+  inset: -1.5rem -1rem;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse 76% 90% at 50% 52%,
+    rgba(5, 6, 10, 0.92),
+    rgba(5, 6, 10, 0.66) 44%,
+    rgba(5, 6, 10, 0.28) 66%,
+    transparent 80%
+  );
 }
 
 .hero__title {
@@ -220,23 +238,25 @@ h1, h2, h3 {
   font-weight: 900;
   letter-spacing: 0.02em;
   line-height: 1.05;
-  text-shadow: 0 0 40px rgba(34, 211, 238, 0.25);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8), 0 0 40px rgba(34, 211, 238, 0.22);
 }
 .hero__title-accent {
   background: var(--brand-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.75));
 }
 @media (max-width: 560px) {
   .hero__title-accent { display: block; }
 }
 
 .hero__tagline {
-  color: var(--text-muted);
+  color: #cdd6e6;
   font-size: clamp(1rem, 2.4vw, 1.35rem);
   max-width: 42ch;
   margin: 1rem auto 2rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 16px rgba(0, 0, 0, 0.75);
 }
 
 .hero__actions {
