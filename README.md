@@ -11,22 +11,36 @@ Plain HTML/CSS/JS — no build step, no framework — served from GitHub Pages.
 
 ```
 .
-├── index.html              # the whole page (semantic sections: hero, games, about, contact)
+├── index.html              # home (semantic sections: hero, games, about, contact)
 ├── 404.html                # GitHub Pages custom not-found page
 ├── robots.txt
 ├── .nojekyll               # tell GitHub Pages to serve files as-is
+├── games/
+│   └── haloward.html       # per-game detail page
 └── assets/
     ├── css/
-    │   └── main.css        # design tokens (:root) + all styles, sectioned with comments
+    │   ├── main.css        # design tokens (:root) + all shared styles
+    │   └── haloward.css    # Haloward's own art direction, layered on main.css
     ├── js/
-    │   ├── hero.js         # interactive mouse-reactive "circuit field" behind the hero
-    │   └── site.js         # renders the games grid, hero glow/parallax, footer year
+    │   ├── hero.js         # the interactive PCB "C" on the home page
+    │   ├── site.js         # renders the games grid, hero glow/parallax, footer year
+    │   └── haloward.js     # Haloward page: heaven/hell seam, art fallbacks
     ├── data/
     │   └── games.js        # ← EDIT THIS to add or change games
     └── img/
         ├── logo.svg        # brand mark (temporary — replace with the real logo, see below)
         └── games/          # game cover art
 ```
+
+## Game detail pages
+
+A game gets its own page when its entry in `games.js` has a `url`. The whole
+card on the home page then links to it.
+
+`games/haloward.html` is the pattern to copy: it loads `main.css` (site chrome,
+header, footer, buttons) and then its own stylesheet for the game's palette, so
+each game can look like itself without touching the shared styles. Note the
+`../` prefix on every asset path — game pages live one level down.
 
 ## Running locally
 
@@ -52,9 +66,25 @@ and point `cover` at it. That's the only file you touch.
   year: 2026,
   cover: "assets/img/games/my-new-game.jpg",
   tags: ["Genre", "Platform"],
+  url: "games/my-new-game.html",     // optional — makes the whole card a link
   links: [{ label: "Steam", url: "https://..." }]
 }
 ```
+
+If the cover image is missing the card falls back to the placeholder, so a
+half-finished entry never shows a broken image.
+
+## Art still to add
+
+These files are referenced but not in the repo yet. Each one degrades
+gracefully until you drop it in — no broken images anywhere.
+
+| Path | What it is |
+| --- | --- |
+| `assets/img/games/haloward-logo.png` | The Haloward logo. Replaces the text wordmark on the game page's hero. |
+| `assets/img/games/haloward-cover.png` | Card art on the home page, ~640×400. Currently the placeholder. |
+| `assets/img/games/haloward-sword.png` | The sword-in-stone art. The "From the world" section hides itself until this exists. |
+| `assets/img/og-cover.png` | 1200×630 link preview for the site. |
 
 ## Replacing the logo
 

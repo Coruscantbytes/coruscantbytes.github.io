@@ -1,0 +1,258 @@
+/* =============================================================
+   Haloward — game page theme
+   Loaded *after* main.css, so it only adds the game's own art
+   direction (celestial gold vs infernal fire) on top of the
+   studio's base styles. Nothing here leaks to other pages.
+
+   1. Game tokens
+   2. Hero (split heaven / hell)
+   3. Duality section
+   4. Feature cards
+   5. Media strip
+   6. CTA
+   7. Responsive + reduced motion
+   ============================================================= */
+
+/* ---------- 1. Game tokens ---------- */
+.haloward {
+  /* celestial */
+  --halo-gold: #f5c45e;
+  --halo-light: #fff4d6;
+  --halo-pale: #cfe3ff;
+  /* infernal */
+  --hell-ember: #ff6a1f;
+  --hell-blood: #c1121f;
+  --hell-char: #2a0d0a;
+  /* page */
+  --halo-ink: #f2ece2;
+  --halo-mute: #a89f92;
+}
+
+.haloward body,
+body.haloward { background: #07070b; }
+
+/* section rules pick up the game's palette instead of the studio's */
+.haloward .section__title::after {
+  background: linear-gradient(100deg, var(--halo-gold), var(--hell-ember));
+}
+
+/* ---------- 2. Hero ---------- */
+.hw-hero {
+  position: relative;
+  min-height: 78vh;
+  min-height: 78svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+  padding: clamp(3rem, 8vw, 6rem) 1.5rem;
+}
+
+/* the two halves of the world; --split is nudged by the pointer in JS */
+.hw-hero__sky,
+.hw-hero__pit {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+.hw-hero__sky {
+  background:
+    radial-gradient(90% 70% at 22% 8%, rgba(255, 244, 214, 0.55), transparent 62%),
+    radial-gradient(70% 60% at 6% 42%, rgba(180, 214, 255, 0.34), transparent 66%),
+    linear-gradient(160deg, #33415f 0%, #131a2b 72%);
+  -webkit-mask-image: linear-gradient(100deg, #000 calc(var(--split, 50%) - 16%), transparent calc(var(--split, 50%) + 16%));
+  mask-image: linear-gradient(100deg, #000 calc(var(--split, 50%) - 16%), transparent calc(var(--split, 50%) + 16%));
+}
+.hw-hero__pit {
+  background:
+    radial-gradient(95% 75% at 82% 96%, rgba(255, 122, 40, 0.5), transparent 62%),
+    radial-gradient(70% 60% at 97% 55%, rgba(193, 18, 31, 0.42), transparent 66%),
+    linear-gradient(160deg, #2b0d0b 0%, #0b0406 78%);
+  -webkit-mask-image: linear-gradient(100deg, transparent calc(var(--split, 50%) - 16%), #000 calc(var(--split, 50%) + 16%));
+  mask-image: linear-gradient(100deg, transparent calc(var(--split, 50%) - 16%), #000 calc(var(--split, 50%) + 16%));
+}
+
+/* the seam where the two worlds meet */
+.hw-hero__seam {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    100deg,
+    transparent calc(var(--split, 50%) - 9%),
+    rgba(255, 190, 110, 0.16) var(--split, 50%),
+    transparent calc(var(--split, 50%) + 9%)
+  );
+}
+
+.hw-hero__logo {
+  width: min(760px, 88vw);
+  height: auto;
+  margin: 0 auto;
+  filter: drop-shadow(0 12px 40px rgba(0, 0, 0, 0.85));
+}
+/* text stand-in until the logo art is dropped in */
+.hw-hero__wordmark {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 11vw, 6rem);
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  margin: 0;
+}
+.hw-hero__wordmark .halo { color: var(--halo-light); text-shadow: 0 0 34px rgba(245, 196, 94, 0.55); }
+.hw-hero__wordmark .ward { color: var(--hell-ember); text-shadow: 0 0 34px rgba(193, 18, 31, 0.6); }
+
+.hw-hero__tagline {
+  color: var(--halo-ink);
+  font-size: clamp(1.05rem, 2.6vw, 1.5rem);
+  max-width: 34ch;
+  margin: 1.4rem auto 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+}
+
+.hw-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 1.6rem 0 2rem;
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.hw-meta span {
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(245, 196, 94, 0.35);
+  color: var(--halo-gold);
+  background: rgba(10, 8, 6, 0.6);
+}
+.hw-meta span[data-side="hell"] {
+  border-color: rgba(255, 106, 31, 0.4);
+  color: var(--hell-ember);
+}
+
+.btn--halo {
+  background: linear-gradient(100deg, var(--halo-gold), var(--hell-ember));
+  color: #14100a;
+  border-color: transparent;
+}
+.btn--halo:hover {
+  color: #14100a;
+  box-shadow: 0 0 34px rgba(255, 140, 60, 0.55);
+}
+
+/* ---------- 3. Duality ---------- */
+.hw-duality {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.hw-side {
+  position: relative;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.hw-side h3 {
+  font-size: 1.25rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.9rem;
+}
+.hw-side p { color: var(--text-muted); margin: 0 0 1rem; }
+.hw-side ul { color: var(--text-muted); margin: 0; padding-left: 1.1rem; }
+.hw-side li { margin-bottom: 0.4rem; }
+
+.hw-side--heaven {
+  background: linear-gradient(155deg, rgba(255, 236, 190, 0.09), transparent 60%);
+  border-color: rgba(245, 196, 94, 0.28);
+}
+.hw-side--heaven h3 { color: var(--halo-gold); }
+
+.hw-side--hell {
+  background: linear-gradient(155deg, rgba(255, 106, 31, 0.10), transparent 60%);
+  border-color: rgba(255, 106, 31, 0.28);
+}
+.hw-side--hell h3 { color: var(--hell-ember); }
+
+/* ---------- 4. Features ---------- */
+.hw-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+.hw-feature {
+  padding: 1.4rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.hw-feature h3 {
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--halo-gold);
+  margin-bottom: 0.5rem;
+}
+.hw-feature p { color: var(--text-muted); margin: 0; font-size: 0.95rem; }
+
+/* ---------- 5. Media ---------- */
+.hw-media {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  align-items: center;
+}
+.hw-media figure {
+  margin: 0;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(90% 80% at 50% 20%, rgba(245, 196, 94, 0.10), transparent 70%),
+    var(--bg-raised);
+  padding: 1.5rem;
+  text-align: center;
+}
+.hw-media img {
+  max-height: 320px;
+  width: auto;
+  margin: 0 auto;
+  filter: drop-shadow(0 16px 34px rgba(0, 0, 0, 0.6));
+}
+.hw-media figcaption {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-top: 1rem;
+}
+
+/* ---------- 6. CTA ---------- */
+.hw-cta {
+  text-align: center;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background:
+    linear-gradient(100deg, rgba(245, 196, 94, 0.07), rgba(255, 106, 31, 0.07));
+}
+.hw-cta .section__head { margin-bottom: 1.75rem; }
+/* centre the title, its gradient rule, and the lead */
+.hw-cta .section__title::after { margin-inline: auto; }
+.hw-cta .section__lead { margin-inline: auto; }
+
+/* ---------- 7. Responsive + reduced motion ---------- */
+@media (max-width: 640px) {
+  .hw-hero { min-height: 66svh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-card__cover,
+  .hw-hero__sky,
+  .hw-hero__pit,
+  .hw-hero__seam { transition: none !important; }
+}

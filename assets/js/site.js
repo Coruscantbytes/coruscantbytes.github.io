@@ -27,17 +27,52 @@
     return node;
   }
 
+  const COVER_FALLBACK = "assets/img/games/_placeholder.svg";
+
+  // Mark external links so they open in a new tab.
+  function wireLink(a, href) {
+    a.href = href || "#";
+    if (a.hostname && a.hostname !== location.hostname) {
+      a.target = "_blank";
+      a.rel = "noopener";
+    }
+    return a;
+  }
+
   function buildCard(game) {
     const li = el("li", "game-card");
 
     const media = el("div", "game-card__media");
-    if (game.cover) media.style.backgroundImage = `url("${game.cover}")`;
+    const img = document.createElement("img");
+    img.className = "game-card__cover";
+    img.alt = "";               // decorative: the title right below says it
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.src = game.cover || COVER_FALLBACK;
+    // if the art isn't in the repo yet, don't leave a broken box
+    img.addEventListener("error", function onErr() {
+      img.removeEventListener("error", onErr);
+      img.src = COVER_FALLBACK;
+    });
+    media.appendChild(img);
+
     const status = el("span", "game-card__status", STATUS_LABEL[game.status] || game.status);
     status.dataset.status = game.status;
     media.appendChild(status);
 
     const body = el("div", "game-card__body");
-    body.appendChild(el("h3", "game-card__title", game.year ? `${game.title} · ${game.year}` : game.title));
+    const heading = el("h3", "game-card__title");
+    const label = game.year ? `${game.title} · ${game.year}` : game.title;
+    if (game.url) {
+      // The anchor is stretched over the whole card in CSS, so the entire
+      // card is clickable while staying a single, real link for a11y.
+      const a = wireLink(el("a", "game-card__link", label), game.url);
+      heading.appendChild(a);
+      li.classList.add("game-card--linked");
+    } else {
+      heading.textContent = label;
+    }
+    body.appendChild(heading);
     if (game.tagline) body.appendChild(el("p", "game-card__tagline", game.tagline));
 
     if (Array.isArray(game.tags) && game.tags.length) {
@@ -51,15 +86,7 @@
 
     if (Array.isArray(game.links) && game.links.length) {
       const links = el("div", "game-card__links");
-      game.links.forEach((l) => {
-        const a = el("a", null, l.label);
-        a.href = l.url || "#";
-        if (a.href && a.hostname !== location.hostname) {
-          a.target = "_blank";
-          a.rel = "noopener";
-        }
-        links.appendChild(a);
-      });
+      game.links.forEach((l) => links.appendChild(wireLink(el("a", null, l.label), l.url)));
       li.appendChild(links);
     }
     return li;

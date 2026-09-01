@@ -9,45 +9,25 @@
      tagline  : short one-liner shown under the title
      status   : "released" | "in-development" | "prototype"
      year     : release / target year (string or number)
-     cover    : path to a 16:10-ish image (jpg/png/webp/svg)
+     cover    : path to a 16:10-ish image (jpg/png/webp/svg).
+                Falls back to the placeholder if the file is missing.
      tags     : array of short strings (genre, platform, engine...)
+     url      : OPTIONAL — a detail page for the game. When present the
+                whole card becomes a link to it.
      links    : array of { label, url } — store pages, trailers, devlogs
    ============================================================= */
 
 window.GAMES = [
   {
-    title: "Project Nova",
-    tagline: "A slow-burn sci-fi mystery set on a dying station.",
+    title: "Haloward",
+    tagline: "Hold the line between Heaven and Hell. A tower defense of light and fire.",
     status: "in-development",
     year: 2026,
-    cover: "assets/img/games/_placeholder.svg",
-    tags: ["Narrative", "Exploration", "PC"],
+    cover: "assets/img/games/haloward-cover.png",
+    tags: ["Tower Defense", "Strategy", "PC"],
+    url: "games/haloward.html",
     links: [
-      { label: "Devlog", url: "#" },
-      { label: "Wishlist", url: "#" }
-    ]
-  },
-  {
-    title: "Ashfall",
-    tagline: "Survive one long night as the ash keeps falling.",
-    status: "released",
-    year: 2025,
-    cover: "assets/img/games/_placeholder.svg",
-    tags: ["Survival", "Atmospheric", "itch.io"],
-    links: [
-      { label: "Play", url: "#" },
-      { label: "Trailer", url: "#" }
-    ]
-  },
-  {
-    title: "Untitled Byte",
-    tagline: "An experiment in movement and light. Very early.",
-    status: "prototype",
-    year: 2026,
-    cover: "assets/img/games/_placeholder.svg",
-    tags: ["Prototype", "Platformer"],
-    links: [
-      { label: "Notes", url: "#" }
+      { label: "Learn more", url: "games/haloward.html" }
     ]
   }
 ];

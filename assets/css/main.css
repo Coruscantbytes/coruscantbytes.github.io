@@ -304,16 +304,22 @@ h1, h2, h3 {
 }
 
 /* ---------- 6. Games grid ---------- */
+/* Capped columns + centred track, so the grid still looks composed when the
+   studio only has one or two games to show. */
 .game-grid {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  /* auto-fit (not auto-fill) collapses the empty tracks, so `justify-content`
+     can actually centre a short row */
+  grid-template-columns: repeat(auto-fit, minmax(290px, 350px));
+  justify-content: center;
   gap: 1.5rem;
 }
 
 .game-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--bg-card);
@@ -333,10 +339,28 @@ h1, h2, h3 {
   position: relative;
   aspect-ratio: 16 / 10;
   background-color: #0a0c14;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  overflow: hidden;
 }
+.game-card__cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.game-card:hover .game-card__cover,
+.game-card:focus-within .game-card__cover { transform: scale(1.04); }
+
+/* a card with a detail page: the title anchor covers the whole card, so
+   clicking anywhere navigates — the explicit links below sit on top of it */
+.game-card--linked .game-card__link { color: inherit; }
+.game-card--linked .game-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.game-card--linked:hover .game-card__link { color: var(--c-cyan); }
+.game-card__links { position: relative; z-index: 2; }
 .game-card__status {
   position: absolute;
   top: 0.75rem;
