@@ -23,9 +23,7 @@ window.GAMES = [
     tagline: "Hold the line between Heaven and Hell. A tower defense of light and fire.",
     status: "in-development",
     year: 2026,
-    // TODO: swap to "assets/img/games/haloward-cover.png" once the art exists.
-    // Pointing at a missing file would 404 on every visit.
-    cover: "assets/img/games/_placeholder.svg",
+    cover: "assets/img/games/haloward-cover.png",
     tags: ["Tower Defense", "Strategy", "PC"],
     url: "games/haloward.html",
     links: [

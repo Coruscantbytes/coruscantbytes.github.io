@@ -96,17 +96,21 @@ header, footer, buttons) and then its own stylesheet for the game's palette, so
 each game can look like itself without touching the shared styles. Note the
 `../` prefix on every asset path — game pages live one level down.
 
-## Art still to add
+## Art
 
-These are referenced in the code but not in the repo yet. Nothing 404s while
-they're missing — each one is switched off with a single edit, listed below.
-(The two Open Graph link-preview images are already generated and in the repo:
-`assets/img/og-cover.png` and `assets/img/games/haloward-og.png`.)
+Live in the repo and wired up:
+
+| File | Where |
+| --- | --- |
+| `assets/img/games/haloward-cover.png` | Card art on the home page (1280×800, 16:10) |
+| `assets/img/games/haloward-logo.png` | Transparent logo, hero of the game page |
+| `assets/img/games/haloward-og.png` | Link preview for the game page |
+| `assets/img/og-cover.png` | Link preview for the site |
+
+Still missing — switched off so nothing 404s:
 
 | File | Where | Switch it on |
 | --- | --- | --- |
-| `assets/img/games/haloward-cover.png` | Card art on the home page, ~640×400 | `cover:` in `assets/data/games.js` |
-| `assets/img/games/haloward-logo.png` | Replaces the text wordmark on the game page | `LOGO_ART` at the top of `assets/js/haloward.js` |
 | `assets/img/games/haloward-sword.png` | "From the world" section | Uncomment the `<figure>` in `games/haloward.html` |
 
 ## Checking the site's health

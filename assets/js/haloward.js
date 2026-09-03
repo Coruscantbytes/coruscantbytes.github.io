@@ -14,10 +14,9 @@
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
   /* ---------- logo art, if it has been added to the repo ---------- */
-  // Set LOGO_ART to the path once the file is in the repo; the styled text
-  // wordmark stands in until then. Left null so the
-  // page doesn't fire a 404 on every visit just to discover it's still missing.
-  const LOGO_ART = null; // "../assets/img/games/haloward-logo.png"
+  // The styled text wordmark stands in until this file loads. Set to null if
+  // the art is ever removed, so the page doesn't 404 chasing a missing file.
+  const LOGO_ART = "../assets/img/games/haloward-logo.png";
 
   const wordmark = document.getElementById("hw-wordmark");
   if (wordmark && LOGO_ART) {
