@@ -93,11 +93,26 @@
     return li;
   }
 
+  // The cards are built from a data file, so if that file fails to load the
+  // section would otherwise render as a bare heading with nothing under it.
+  // Say something useful instead.
+  function fallbackNote(gridEl, text, linkText, href) {
+    const li = el("li", "grid-empty");
+    li.appendChild(el("p", null, text));
+    if (linkText) li.appendChild(wireLink(el("a", null, linkText), href));
+    gridEl.appendChild(li);
+  }
+
   const grid = document.getElementById("game-grid");
-  if (grid && Array.isArray(window.GAMES)) {
-    const frag = document.createDocumentFragment();
-    window.GAMES.forEach((g) => frag.appendChild(buildCard(g)));
-    grid.appendChild(frag);
+  if (grid) {
+    if (Array.isArray(window.GAMES) && window.GAMES.length) {
+      const frag = document.createDocumentFragment();
+      window.GAMES.forEach((g) => frag.appendChild(buildCard(g)));
+      grid.appendChild(frag);
+    } else {
+      fallbackNote(grid, "Our games list didn't load.",
+        "See what we're building on X", "https://x.com/coruscantbytes");
+    }
   }
 
   /* ---------- tools grid ---------- */
@@ -129,10 +144,15 @@
   }
 
   const toolGrid = document.getElementById("tool-grid");
-  if (toolGrid && Array.isArray(window.TOOLS)) {
-    const frag = document.createDocumentFragment();
-    window.TOOLS.forEach((t) => frag.appendChild(buildToolCard(t)));
-    toolGrid.appendChild(frag);
+  if (toolGrid) {
+    if (Array.isArray(window.TOOLS) && window.TOOLS.length) {
+      const frag = document.createDocumentFragment();
+      window.TOOLS.forEach((t) => frag.appendChild(buildToolCard(t)));
+      toolGrid.appendChild(frag);
+    } else {
+      fallbackNote(toolGrid, "Our tools list didn't load.",
+        "Find us on GitHub", "https://github.com/Coruscantbytes");
+    }
   }
 
   /* ---------- hero pointer glow + parallax ---------- */
