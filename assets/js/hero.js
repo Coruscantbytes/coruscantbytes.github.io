@@ -152,6 +152,30 @@
     return out;
   }
 
+  // is (x, y) inside the C's body? used to keep breakouts from poking out
+  function inBody(x, y) {
+    const dx = x - cx, dy = y - cy;
+    const d = Math.hypot(dx, dy);
+    if (d < rInner + CONFIG.edgePad || d > R - CONFIG.edgePad) return false;
+    return Math.abs(Math.atan2(dy, dx)) > gapHalf + 0.08;
+  }
+
+  // straight radial run at a fixed angle
+  function pushRadial(pts, r0, r1, ang) {
+    const steps = Math.max(2, (Math.abs(r1 - r0) / 7) | 0);
+    for (let i = pts.length ? 1 : 0; i <= steps; i++) {
+      pts.push(P(lerp(r0, r1, i / steps), ang));
+    }
+  }
+
+  // arc run at a fixed radius — matches the curvature of the lanes
+  function pushArc(pts, rad, a0, a1) {
+    // finer than the long lanes: a short dogleg needs enough segments or the
+    // curve reads as a kink instead of a bend
+    const steps = Math.max(6, (Math.abs(a1 - a0) / (1.2 * RAD)) | 0);
+    for (let i = 1; i <= steps; i++) pts.push(P(rad, lerp(a0, a1, i / steps)));
+  }
+
   function build() {
     traces = [];
     const rLo = rInner + CONFIG.edgePad;
@@ -197,69 +221,60 @@
         w: 1.0 + Math.random() * 0.6
       });
 
-      // --- diagonal branch peeling off an inner/outer lane ---
+      // --- 45deg breakout: a straight stub leaving the lane, the way a real
+      //     fan-out does it. Straight line, one angle, via at the tip. ---
       if (k > 0 && k < laneCount - 1 && Math.random() < CONFIG.branchChance) {
-        const baseA = lerp(A0, A1, 0.18 + Math.random() * 0.64);
-        const angDir = Math.random() < 0.5 ? -1 : 1;
-        const radDir = Math.random() < 0.5 ? -1 : 1;
-        const steps = 9 + ((Math.random() * 9) | 0);
-        const spanLanes = 1.4 + Math.random() * 1.6;
-        const bpts = [];
-        for (let s = 0; s <= steps; s++) {
-          const f = s / steps;
-          const a = baseA + angDir * f * (24 + Math.random() * 6) * RAD;
-          const rr = Math.max(rLo, Math.min(rHi, rad + radDir * f * spanLanes * laneW));
-          bpts.push(P(rr, a));
+        const a = lerp(A0, A1, 0.12 + Math.random() * 0.76);
+        const p0 = P(rad, a);
+        // radial direction at this point, turned exactly 45 degrees
+        const dir = a + (Math.random() < 0.5 ? -1 : 1) * (Math.PI / 4);
+        // short: a fan-out stub reaches the next lane or two, it doesn't
+        // cut across half the board
+        const len = laneW * (1.0 + Math.random() * 0.9);
+        const p1 = { x: p0.x + Math.cos(dir) * len, y: p0.y + Math.sin(dir) * len };
+        if (inBody(p1.x, p1.y)) {
+          traces.push({
+            pts: [p0, p1],
+            col: CONFIG.cyan,
+            axis: "h",
+            vias: [p1],
+            phase: Math.random() * 1000,
+            w: 0.85
+          });
         }
-        traces.push({
-          pts: bpts,
-          col: CONFIG.cyan,
-          axis: "h",
-          vias: [bpts[0], bpts[bpts.length - 1]],
-          phase: Math.random() * 1000,
-          w: 0.8
-        });
       }
     }
 
-    // --- radial "cross" traces: run across the lanes with 90deg turns,
-    //     so the routing reads as a mix of horizontal + vertical, not just rings ---
-    const radialCount = Math.round(laneCount * 1.25);
+    // --- radial "cross" traces ---
+    // Copper is never scribbled: these are straight radial runs, and the ones
+    // that change angle do it with a single clean bend, not a staircase.
+    const radialCount = Math.round(laneCount * 0.9);
     for (let n = 0; n < radialCount; n++) {
+      // one per slot around the arc, so they never bunch up
+      const a = lerp(A0, A1, (n + 0.25 + Math.random() * 0.5) / radialCount);
+      const k0 = (Math.random() * (laneCount - 2)) | 0;
+      const span = 2 + ((Math.random() * 3) | 0);
+      const r0 = rLo + k0 * laneW;
+      const r1 = Math.min(rHi, r0 + span * laneW);
+      if (r1 - r0 < laneW) continue;
+
       const pts = [];
-      // spread them around the arc instead of clustering
-      let a = lerp(A0, A1, (n + 0.15 + Math.random() * 0.7) / radialCount);
-      let r = rLo + Math.random() * (rHi - rLo);
-      const rDir = Math.random() < 0.5 ? 1 : -1;
-      pts.push(P(r, a));
+      pushRadial(pts, r0, r1, a);
 
-      const legs = 2 + ((Math.random() * 2) | 0);
-      for (let leg = 0; leg < legs; leg++) {
-        // radial leg (the "vertical" run)
-        const r2 = Math.max(rLo, Math.min(rHi,
-          r + rDir * laneW * (1 + Math.random() * 1.5)));
-        const rSteps = Math.max(2, (Math.abs(r2 - r) / 6) | 0);
-        for (let s = 1; s <= rSteps; s++) pts.push(P(lerp(r, r2, s / rSteps), a));
-        r = r2;
-
-        // short arc leg (the 90deg turn / "horizontal" run)
-        if (leg < legs - 1) {
-          const a2 = a + (Math.random() < 0.5 ? -1 : 1) * (3 + Math.random() * 6) * RAD;
-          const aSteps = Math.max(2, (Math.abs(a2 - a) / (CONFIG.stepDeg * RAD)) | 0);
-          for (let s = 1; s <= aSteps; s++) pts.push(P(r, lerp(a, a2, s / aSteps)));
-          a = a2;
-        }
-        if (r <= rLo + 1 || r >= rHi - 1) break;
+      // one in three gets a single dogleg: shift along one arc, then continue
+      if (Math.random() < 0.25 && r1 < rHi - laneW * 1.2) {
+        const a2 = a + (Math.random() < 0.5 ? -1 : 1) * (5 + Math.random() * 4) * RAD;
+        pushArc(pts, r1, a, a2);
+        pushRadial(pts, r1, Math.min(rHi, r1 + laneW * (1 + Math.random())), a2);
       }
-      if (pts.length < 3) continue;
 
       traces.push({
         pts: pts,
         col: CONFIG.magenta,       // radial = "vertical" = pink
         axis: "v",
-        vias: [pts[0], pts[pts.length - 1], pts[(pts.length / 2) | 0]],
+        vias: [pts[0], pts[pts.length - 1]],
         phase: Math.random() * 1000,
-        w: 0.9 + Math.random() * 0.5
+        w: 0.95 + Math.random() * 0.4
       });
     }
   }
