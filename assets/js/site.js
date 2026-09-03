@@ -1,6 +1,7 @@
 /* =============================================================
    Coruscantbytes — site behaviour
    - renders the games grid from window.GAMES
+   - renders the tools grid from window.TOOLS
    - pointer-follow glow + subtle parallax on the hero
    - footer year
    ============================================================= */
@@ -97,6 +98,41 @@
     const frag = document.createDocumentFragment();
     window.GAMES.forEach((g) => frag.appendChild(buildCard(g)));
     grid.appendChild(frag);
+  }
+
+  /* ---------- tools grid ---------- */
+  // Tools are for developers, not players, so they live in their own section
+  // with their own, lighter card: no cover art, a price badge, a store link.
+  function buildToolCard(tool) {
+    const li = el("li", "tool-card");
+
+    const head = el("div", "tool-card__head");
+    const title = el("h3", "tool-card__title");
+    title.appendChild(wireLink(el("a", "tool-card__link", tool.name), tool.url));
+    head.appendChild(title);
+    if (tool.price) head.appendChild(el("span", "tool-card__price", tool.price));
+    li.appendChild(head);
+
+    if (tool.subtitle) li.appendChild(el("p", "tool-card__subtitle", tool.subtitle));
+    if (tool.description) li.appendChild(el("p", "tool-card__desc", tool.description));
+
+    if (Array.isArray(tool.tags) && tool.tags.length) {
+      const tags = el("div", "game-card__tags");
+      tool.tags.forEach((t) => tags.appendChild(el("span", "game-card__tag", t)));
+      li.appendChild(tags);
+    }
+
+    if (tool.store) {
+      li.appendChild(el("p", "tool-card__store", "On the " + tool.store + " →"));
+    }
+    return li;
+  }
+
+  const toolGrid = document.getElementById("tool-grid");
+  if (toolGrid && Array.isArray(window.TOOLS)) {
+    const frag = document.createDocumentFragment();
+    window.TOOLS.forEach((t) => frag.appendChild(buildToolCard(t)));
+    toolGrid.appendChild(frag);
   }
 
   /* ---------- hero pointer glow + parallax ---------- */

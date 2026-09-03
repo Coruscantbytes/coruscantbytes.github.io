@@ -28,11 +28,17 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Fonts load without blocking the first paint: preload the stylesheet,
+       then flip it to a real stylesheet once it arrives. `display=swap` in the
+       URL means text shows in the fallback face until Orbitron/Rajdhani land. -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;700&display=swap"
+        media="print" onload="this.media='all'; this.onload=null" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;700&display=swap" /></noscript>
 
   <!-- Bump ?v= whenever you edit a CSS/JS file, so browsers pick it up
        instead of serving a stale cached copy. -->
-  <link rel="stylesheet" href="assets/css/main.css?v=3" />
+  <link rel="stylesheet" href="assets/css/main.css?v=6" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -46,6 +52,7 @@
 
     <nav class="site-nav" aria-label="Primary">
       <a href="#games">Games</a>
+      <a href="#tools">Tools</a>
       <a href="#about">About</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -82,6 +89,19 @@
 
       <!-- Cards are rendered from assets/data/games.js -->
       <ul class="game-grid" id="game-grid"></ul>
+    </section>
+
+    <!-- ===================== Tools ===================== -->
+    <section class="section" id="tools">
+      <div class="section__head">
+        <h2 class="section__title">Tools</h2>
+        <p class="section__lead">
+          Things we built for ourselves and published for other developers.
+        </p>
+      </div>
+
+      <!-- Cards are rendered from assets/data/tools.js -->
+      <ul class="tool-grid" id="tool-grid"></ul>
     </section>
 
     <!-- ===================== About ===================== -->
@@ -141,8 +161,9 @@
     <p class="site-footer__legal">© <span id="year">2026</span> Coruscantbytes. All rights reserved.</p>
   </footer>
 
-  <script src="assets/data/games.js?v=3"></script>
-  <script src="assets/js/site.js?v=3" defer></script>
-  <script src="assets/js/hero.js?v=3" defer></script>
+  <script src="assets/data/games.js?v=6"></script>
+  <script src="assets/data/tools.js?v=6"></script>
+  <script src="assets/js/site.js?v=6" defer></script>
+  <script src="assets/js/hero.js?v=6" defer></script>
 </body>
 </html>

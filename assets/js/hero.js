@@ -97,7 +97,8 @@
   }
 
   function resize() {
-    const rect = canvas.getBoundingClientRect();
+    cachedRect = null;
+    const rect = canvasRect();
     const d = Math.min(window.devicePixelRatio || 1, 2);
     if (!sizeChangedEnough(rect.width, rect.height, d)) return;
 
@@ -600,11 +601,25 @@
     }
   }
 
-  // Re-derive canvas-local target + over-state from the live canvas rect.
+  // getBoundingClientRect() forces a layout, and calling it every frame (after
+  // other scripts have written styles) shows up as "forced reflow" in
+  // Lighthouse. The rect only moves when the page scrolls or resizes, so cache
+  // it and re-measure only when one of those actually happened.
+  let cachedRect = null;
+  const invalidateRect = () => { cachedRect = null; };
+  window.addEventListener("scroll", invalidateRect, { passive: true });
+  window.addEventListener("resize", invalidateRect);
+
+  function canvasRect() {
+    if (!cachedRect) cachedRect = canvas.getBoundingClientRect();
+    return cachedRect;
+  }
+
+  // Re-derive canvas-local target + over-state from the canvas rect.
   // A margin lets the rig start easing in just before the cursor arrives and
   // keeps it from cutting out the instant it crosses the edge.
   function syncPointer() {
-    const rect = canvas.getBoundingClientRect();
+    const rect = canvasRect();
     const m = 40;
     pointer.over =
       pointer.clientX >= rect.left - m && pointer.clientX <= rect.right + m &&

@@ -26,11 +26,17 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Fonts load without blocking the first paint: preload the stylesheet,
+       then flip it to a real stylesheet once it arrives. `display=swap` in the
+       URL means text shows in the fallback face until Orbitron/Rajdhani land. -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;700&display=swap"
+        media="print" onload="this.media='all'; this.onload=null" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;700&display=swap" /></noscript>
 
   <!-- base site styles, then this game's own art direction -->
-  <link rel="stylesheet" href="../assets/css/main.css?v=3" />
-  <link rel="stylesheet" href="../assets/css/haloward.css?v=3" />
+  <link rel="stylesheet" href="../assets/css/main.css?v=6" />
+  <link rel="stylesheet" href="../assets/css/haloward.css?v=6" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -43,6 +49,7 @@
 
     <nav class="site-nav" aria-label="Primary">
       <a href="../index.html#games">Games</a>
+      <a href="../index.html#tools">Tools</a>
       <a href="../index.html#about">About</a>
       <a href="../index.html#contact">Contact</a>
     </nav>
@@ -167,12 +174,17 @@
       </div>
 
       <div class="hw-media">
+        <!-- Add the art at assets/img/games/haloward-sword.png, then uncomment.
+             Left commented so the page doesn't 404 on every visit; the section
+             hides itself if an image here fails to load. -->
+        <!--
         <figure>
           <img src="../assets/img/games/haloward-sword.png"
                alt="A winged blade of light driven into a mossy stone"
                loading="lazy" decoding="async" />
           <figcaption>The blade in the stone — the first thing you defend.</figcaption>
         </figure>
+        -->
       </div>
     </section>
 
@@ -220,6 +232,6 @@
     <p class="site-footer__legal">© <span id="year">2026</span> Coruscantbytes. All rights reserved.</p>
   </footer>
 
-  <script src="../assets/js/haloward.js?v=3" defer></script>
+  <script src="../assets/js/haloward.js?v=6" defer></script>
 </body>
 </html>

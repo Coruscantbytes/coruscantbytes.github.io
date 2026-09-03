@@ -23,11 +23,13 @@ window.GAMES = [
     tagline: "Hold the line between Heaven and Hell. A tower defense of light and fire.",
     status: "in-development",
     year: 2026,
-    cover: "assets/img/games/haloward-cover.png",
+    // TODO: swap to "assets/img/games/haloward-cover.png" once the art exists.
+    // Pointing at a missing file would 404 on every visit.
+    cover: "assets/img/games/_placeholder.svg",
     tags: ["Tower Defense", "Strategy", "PC"],
     url: "games/haloward.html",
     links: [
-      { label: "Learn more", url: "games/haloward.html" }
+      { label: "About Haloward", url: "games/haloward.html" }
     ]
   }
 ];

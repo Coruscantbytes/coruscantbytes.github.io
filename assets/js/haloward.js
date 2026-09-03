@@ -14,10 +14,13 @@
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
   /* ---------- logo art, if it has been added to the repo ---------- */
-  // Until assets/img/games/haloward-logo.png exists the styled text stands in,
-  // so the page never shows a broken image.
+  // Set LOGO_ART to the path once the file is in the repo; the styled text
+  // wordmark stands in until then. Left null so the
+  // page doesn't fire a 404 on every visit just to discover it's still missing.
+  const LOGO_ART = null; // "../assets/img/games/haloward-logo.png"
+
   const wordmark = document.getElementById("hw-wordmark");
-  if (wordmark) {
+  if (wordmark && LOGO_ART) {
     const probe = new Image();
     probe.onload = function () {
       const img = document.createElement("img");
@@ -31,7 +34,7 @@
       h1.appendChild(img);
       wordmark.replaceWith(h1);
     };
-    probe.src = "../assets/img/games/haloward-logo.png";
+    probe.src = LOGO_ART;
   }
 
   /* ---------- art that isn't in the repo yet ---------- */
@@ -39,13 +42,17 @@
   // nothing is left, rather than showing broken-image boxes.
   const mediaSection = document.getElementById("media");
   if (mediaSection) {
+    const dropIfEmpty = () => {
+      if (!mediaSection.querySelector("figure")) mediaSection.hidden = true;
+    };
     mediaSection.querySelectorAll("figure img").forEach((img) => {
       img.addEventListener("error", () => {
         const fig = img.closest("figure");
         if (fig) fig.remove();
-        if (!mediaSection.querySelector("figure")) mediaSection.hidden = true;
+        dropIfEmpty();
       });
     });
+    dropIfEmpty();   // nothing added yet -> don't show an empty section
   }
 
   /* ---------- the seam follows the pointer ---------- */
