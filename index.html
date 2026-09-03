@@ -7,6 +7,7 @@
   <title>Coruscantbytes — Indie Game Studio</title>
   <meta name="description" content="Coruscantbytes is an independent game studio crafting handmade, atmospheric games." />
   <meta name="theme-color" content="#05060a" />
+  <meta name="author" content="Farhan Zinatloo" />
 
   <!-- ===== Social sharing (Open Graph + Twitter) ===== -->
   <meta property="og:type" content="website" />
@@ -41,7 +42,32 @@
 
   <!-- Bump ?v= whenever you edit a CSS/JS file, so browsers pick it up
        instead of serving a stale cached copy. -->
-  <link rel="stylesheet" href="assets/css/main.css?v=12" />
+  <link rel="stylesheet" href="assets/css/main.css?v=13" />
+  <!-- Structured data: ties the studio, its founder and its accounts together
+       so search engines treat them as one entity. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Coruscantbytes",
+    "url": "https://coruscantbytes.github.io/",
+    "logo": "https://coruscantbytes.github.io/assets/img/og-cover.png",
+    "description": "Independent game studio crafting handmade, atmospheric games.",
+    "email": "coruscantbytes@gmail.com",
+    "founder": {
+      "@type": "Person",
+      "name": "Farhan Zinatloo",
+      "jobTitle": "Founder & Solo developer"
+    },
+    "sameAs": [
+      "https://x.com/coruscantbytes",
+      "https://www.instagram.com/coruscantbytes/",
+      "https://www.tiktok.com/@coruscantbytes",
+      "https://www.youtube.com/@Coruscantbytes",
+      "https://github.com/Coruscantbytes"
+    ]
+  }
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -87,7 +113,7 @@
     <section class="section" id="games">
       <div class="section__head">
         <h2 class="section__title">Games</h2>
-        <p class="section__lead">Everything we've shipped and everything we're building now.</p>
+        <p class="section__lead">Everything I've shipped and everything I'm building now.</p>
       </div>
 
       <!-- Cards are rendered from assets/data/games.js -->
@@ -99,7 +125,7 @@
       <div class="section__head">
         <h2 class="section__title">Tools</h2>
         <p class="section__lead">
-          Things we built for ourselves and published for other developers.
+          Things I built for myself and published for other developers.
         </p>
       </div>
 
@@ -114,13 +140,23 @@
       </div>
       <div class="prose">
         <p>
-          Coruscantbytes is a small independent studio. We build the kind of games we
-          want to play: atmospheric, deliberate, and made by hand.
+          Coruscantbytes is a one-person studio. I design it, build it, and ship it —
+          the games, the tools, and this site.
         </p>
         <p>
-          This site is a living portfolio — check back as projects move from prototype
-          to release.
+          I make the kind of games I want to play: atmospheric, deliberate, and made
+          by hand. Right now that's <a href="games/haloward.html">Haloward</a>, a tower
+          defense set on the line between Heaven and Hell.
         </p>
+        <p>
+          Along the way I publish the tools I build for myself, so other developers
+          don't have to build them twice.
+        </p>
+      </div>
+
+      <div class="signature">
+        <span class="signature__name">Farhan Zinatloo</span>
+        <span class="signature__role">Founder &middot; Solo developer</span>
       </div>
     </section>
 
@@ -164,9 +200,9 @@
     <p class="site-footer__legal">© <span id="year">2026</span> Coruscantbytes. All rights reserved.</p>
   </footer>
 
-  <script src="assets/data/games.js?v=12"></script>
-  <script src="assets/data/tools.js?v=12"></script>
-  <script src="assets/js/site.js?v=12" defer></script>
-  <script src="assets/js/hero.js?v=12" defer></script>
+  <script src="assets/data/games.js?v=13"></script>
+  <script src="assets/data/tools.js?v=13"></script>
+  <script src="assets/js/site.js?v=13" defer></script>
+  <script src="assets/js/hero.js?v=13" defer></script>
 </body>
 </html>

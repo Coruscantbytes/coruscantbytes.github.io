@@ -244,6 +244,11 @@ body.haloward { background: #07070b; }
 /* centre the title, its gradient rule, and the lead */
 .hw-cta .section__title::after { margin-inline: auto; }
 .hw-cta .section__lead { margin-inline: auto; }
+.hw-credit {
+  margin: 2.25rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
 
 /* ---------- 7. Responsive + reduced motion ---------- */
 @media (max-width: 640px) {

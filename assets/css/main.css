@@ -8,6 +8,7 @@
    5. Hero (interactive)
    6. Sections + games grid
    6b. Tools grid
+   6c. Founder signature
    7. Buttons
    8. Footer
    9. Responsive
@@ -500,6 +501,34 @@ h1, h2, h3 {
   border-radius: var(--radius);
 }
 .grid-empty p { margin: 0 0 0.5rem; }
+
+/* ---------- 6c. Founder signature ---------- */
+/* Sits under the About copy: the studio is one person, so say who. */
+.signature {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-top: 2.25rem;
+  padding-left: 1.1rem;
+  border-left: 2px solid transparent;
+  border-image: var(--brand-gradient) 1;
+}
+.signature__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.signature__role {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
 
 /* ---------- 7. Buttons ---------- */
 .btn {

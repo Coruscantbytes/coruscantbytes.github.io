@@ -39,8 +39,8 @@
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;700&display=swap" /></noscript>
 
   <!-- base site styles, then this game's own art direction -->
-  <link rel="stylesheet" href="../assets/css/main.css?v=12" />
-  <link rel="stylesheet" href="../assets/css/haloward.css?v=12" />
+  <link rel="stylesheet" href="../assets/css/main.css?v=13" />
+  <link rel="stylesheet" href="../assets/css/haloward.css?v=13" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -68,8 +68,8 @@
       <div class="hw-hero__seam" aria-hidden="true"></div>
 
       <div>
-        <!-- Drop the logo art at assets/img/games/haloward-logo.png and it
-             replaces the text wordmark automatically (see the script below). -->
+        <!-- haloward.js swaps this for the logo art once it loads; the
+             styled text is the fallback. -->
         <h1 class="hw-hero__wordmark" id="hw-wordmark">
           <span class="halo">HALO</span><span class="ward">WARD</span>
         </h1>
@@ -205,6 +205,10 @@
         <a class="btn" href="https://www.youtube.com/@Coruscantbytes" target="_blank" rel="noopener">Watch on YouTube</a>
         <a class="btn" href="mailto:coruscantbytes@gmail.com">Press &amp; business</a>
       </div>
+
+      <p class="hw-credit">
+        Made by <a href="../index.html#about">Farhan Zinatloo</a> at Coruscantbytes.
+      </p>
     </section>
 
   </main>
@@ -236,6 +240,6 @@
     <p class="site-footer__legal">© <span id="year">2026</span> Coruscantbytes. All rights reserved.</p>
   </footer>
 
-  <script src="../assets/js/haloward.js?v=12" defer></script>
+  <script src="../assets/js/haloward.js?v=13" defer></script>
 </body>
 </html>
