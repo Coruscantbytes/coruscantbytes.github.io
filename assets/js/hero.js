@@ -49,6 +49,8 @@
   // `elapsed` accumulates across stop/start (scrolling away and back), so the
   // flowing current and the chip's rotation pick up where they left off
   let rafId = 0, running = false, lastT = 0, elapsed = 0;
+  // the canvas size the current trace layout was generated for
+  let builtW = 0, builtH = 0, builtDpr = 0;
 
   // Pointer state. Client coords are the source of truth (they survive
   // scrolling); canvas-local x/y are re-derived every frame and eased, so the
@@ -82,11 +84,29 @@
     ctx.closePath();
   }
 
+  // Mobile browsers fire `resize` whenever the URL bar slides in or out while
+  // scrolling. Rebuilding there would reroute every trace, so the board appears
+  // to "refresh" on the way back up. Only rebuild when the size really changed:
+  // any width change, or a height change too big to be browser chrome.
+  function sizeChangedEnough(w, h, d) {
+    if (!builtW || !builtH) return true;            // first run
+    if (d !== builtDpr) return true;                // moved to another screen
+    if (Math.abs(w - builtW) > 1) return true;      // rotation / window resize
+    const tolerance = Math.max(150, builtH * 0.22); // URL bar, toolbars
+    return Math.abs(h - builtH) > tolerance;
+  }
+
   function resize() {
     const rect = canvas.getBoundingClientRect();
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const d = Math.min(window.devicePixelRatio || 1, 2);
+    if (!sizeChangedEnough(rect.width, rect.height, d)) return;
+
+    dpr = d;
     W = rect.width;
     H = rect.height;
+    builtW = W;
+    builtH = H;
+    builtDpr = dpr;
     canvas.width = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
